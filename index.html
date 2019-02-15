@@ -85,24 +85,53 @@
         border-left: thin solid lightgray;
         box-shadow: 0px -12px 7px 1px lightgrey;
     }
+
+    .gray-button {
+        margin: 0;
+        background: black;
+        color: white;
+        border-radius: 0px;
+        opacity: .3;
+        outline: none;
+        border: thin solid darkgray;
+    }
+
+    .light-button {
+        margin: 0;
+        border: solid thin lightgray;
+        border-radius: 0;
+        color: darkgray;
+    }
+
+    .login-view {
+        background: white;
+        top: 100px;
+        position: absolute;
+        padding: 35px;
+    }
+
+    .login-input {
+        border-right: none;
+        border-left: none;
+        border-top: none;
+        border-radius: 0;
+    }
 </style>
 <div class="app container">
     <div class="login-view view">
         <div class="form-group">
-            <label for="emailInput">Email address</label>
-            <input name="email" type="email" class="form-control" id="emailInput" aria-describedby="emailHelp"
+            <input name="email" type="email" class="form-control login-input" id="emailInput" aria-describedby="emailHelp"
                    placeholder="Enter email">
             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
         </div>
         <div class="form-group">
-            <label for="passwordInput">Password</label>
-            <input name="password" type="password" class="form-control" id="passwordInput" placeholder="Password">
+            <input name="password" type="password" class="form-control login-input" id="passwordInput" placeholder="Password">
         </div>
         <div class="next-buttons">
-            <button onclick="ui.buttonPushed('create-account')" id="create-account-btn" style="margin:0;" class="btn">
+            <button onclick="ui.buttonPushed('create-account')" id="create-account-btn" class="btn light-button">
                 Create Account
             </button>
-            <button onclick="ui.processLogin()" style="margin:0;background:black;color:white;border-radius:0px;opacity:.3;" class="btn">Login
+            <button onclick="ui.processLogin()" class="btn gray-button">Login
             </button>
         </div>
         <div class="create-account-info" hidden>
@@ -127,20 +156,17 @@
                 </div>
             </div>-->
                 <div class="form-group">
-                    <label for="firstInput">First Name</label>
-                    <input name="firstName" type="text" class="form-control" id="firstInput">
+                    <input name="firstName" type="text" placeholder="First Name" class="form-control login-input" id="firstInput">
                 </div>
                 <div class="form-group">
-                    <label for="lastInput">Last Name</label>
-                    <input name="lastName" type="text" class="form-control" id="lastInput">
+                    <input name="lastName" type="text" placeholder="Last Name" class="form-control login-input" id="lastInput">
                 </div>
                 <div class="form-group">
-                    <label for="phoneInput">Phone</label>
-                    <input name="phone" type="text" id="phoneInput" class="form-control">
+                    <input name="phone" type="text" id="phoneInput" placeholder="Phone" class="form-control login-input">
                 </div>
 
-                <button onclick="ui.processCreateAccount();" type="submit" class="btn btn-primary">Create Account</button>
-                <button onclick="ui.cancelCreateAccount();" type="submit" class="btn btn-primary">Cancel</button>
+            <button onclick="ui.cancelCreateAccount();" type="submit" class="btn light-button">Cancel</button>
+            <button onclick="ui.processCreateAccount();" type="submit" class="btn gray-button">Create Account</button>
         </div>
 
     </div>
