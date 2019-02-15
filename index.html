@@ -18,32 +18,335 @@
     under the License.
 -->
 <html>
-    <head>
-        <!--
-        Customize this policy to fit your own app's needs. For more guidance, see:
-            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
-        Some notes:
-            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-                * Enable inline JS: add 'unsafe-inline' to default-src
-        -->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
-        <meta name="format-detection" content="telephone=no">
-        <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-        <link rel="stylesheet" type="text/css" href="css/index.css">
-        <title>Hello World</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
+<head>
+    <!--
+    Customize this policy to fit your own app's needs. For more guidance, see:
+        https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+    Some notes:
+        * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+        * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+        * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+            * Enable inline JS: add 'unsafe-inline' to default-src
+    -->
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport"
+          content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <title>ShopRecipe</title>
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="libs/jqueryui/jquery-ui.min.css">
+    <script src="libs/jquery/jquery-3.3.1.min.js"></script>
+    <script src="libs/popper/popper.min.js"></script>
+    <script src="libs/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="libs/jqueryui/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+</head>
+<body style="background-image: url('./img/background0.jpg');background-size: 768px 1024px;">
+<div id="dialog"></div>
+<style>
+    .recipe {
+        display: grid;
+        grid-template-columns: 30% 60% 10%;    border-bottom: thin solid #f1f1f1;
+    }
+
+    .recipe .main {
+        padding: 10px;
+    }
+
+    .recipe img {
+        padding: 10px;
+    }
+
+    .action > button {
+        height: 90px;
+        top: 10px;
+        position: relative;
+        width: 100%;
+        border: none;
+        border-radius: 75px;
+        background-color: #fff;
+        opacity: .3;
+    }
+
+    .recipe .recipe-desc {
+        margin: 0;
+        padding: 0;
+    }
+
+    .recipe .recipe-heading {
+        font-size: 14px;
+        margin: 0px;
+    }
+
+    .recipe-view {
+        border-right: thin solid lightgray;
+        border-left: thin solid lightgray;
+        box-shadow: 0px -12px 7px 1px lightgrey;
+    }
+</style>
+<div class="app container">
+    <div class="login-view view">
+        <div class="form-group">
+            <label for="emailInput">Email address</label>
+            <input name="email" type="email" class="form-control" id="emailInput" aria-describedby="emailHelp"
+                   placeholder="Enter email">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+            <label for="passwordInput">Password</label>
+            <input name="password" type="password" class="form-control" id="passwordInput" placeholder="Password">
+        </div>
+        <div class="next-buttons">
+            <button onclick="ui.buttonPushed('create-account')" id="create-account-btn" style="margin:0;" class="btn">
+                Create Account
+            </button>
+            <button style="margin:0;background:black;color:white;border-radius:0px;opacity:.3;" class="btn">Login
+            </button>
+        </div>
+        <div class="create-account-info" hidden>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="zipInput">Zip</label>
+                        <input name="zip" pattern="^\d\d\d\d\d$" title="Please enter a 5 digit zip." maxlength="5" minlength="5"
+                               onchange="ui.updateStateHtml(this)" type="text" class="form-control" id="zipInput">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="addressInput">Address</label>
+                    <input name="address" type="text" class="form-control" id="addressInput" placeholder="1234 Main St">
+                </div>
+                <div class="form-group">
+                    <label for="address2Input">Address 2</label>
+                    <input name="address2" type="text" class="form-control" id="address2Input"
+                           placeholder="Apartment, studio, or floor">
+                </div>
+                <div class="form-row">
+                    <div id="auto-fill-country-state-city">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="firstInput">First Name</label>
+                    <input name="firstName" type="text" class="form-control" id="firstInput">
+                </div>
+                <div class="form-group">
+                    <label for="lastInput">Last Name</label>
+                    <input name="lastName" type="text" class="form-control" id="lastInput">
+                </div>
+                <div class="form-group">
+                    <label for="middleInput">Middle Name</label>
+                    <input name="middleName" type="text" class="form-control" id="middleInput">
+                </div>
+                <div class="form-group">
+                    <label for="gender-select">Gender</label>
+                    <select name="gender" id="gender-select" class="form-control">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="phoneInput">Phone</label>
+                    <input name="phone" type="text" id="phoneInput" class="form-control">
+                </div>
+
+                <button onclick="ui.processCreateAccount();" type="submit" class="btn btn-primary">Create Account</button>
+                <button onclick="ui.cancelCreateAccount();" type="submit" class="btn btn-primary">Cancel</button>
+        </div>
+
+    </div>
+    <div class="recipe-view view" hidden>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
             </div>
         </div>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-    </body>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+        <div class="recipe">
+            <div>
+                <img src="https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/frying-pan-pizza-easy-recipe-collection.jpg"
+                     class="card-img-top" alt="...">
+            </div>
+            <div class="main">
+                <h1 class="recipe-heading">Recipe Heading</h1>
+                <p class="recipe-desc">Some quick example text to build on the card...</p><!-- 48 char length max -->
+                <span class="price">$2.99</span>
+            </div>
+            <div class="action">
+                <button><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="js/sys.js"></script>
+<script type="text/javascript" src="js/api.js"></script>
+<script type="text/javascript" src="js/address.js"></script>
+<script type="text/javascript" src="js/ui.js"></script>
+</body>
 </html>
