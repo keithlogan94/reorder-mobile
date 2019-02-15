@@ -5,14 +5,27 @@ var ui = {};
 
 $(function () {
     address.loadCountriesSelect($('.country-container'));
-    ui.showRecipesView();
 });
-
 
 ui.showAccountCreation = function () {
     $('.create-account-info').removeAttr('hidden');
     $('.create-account-info').show();
     $('.next-buttons').hide();
+};
+
+ui.processLogin = function () {
+    var loginObj = {
+        reorder_username: $('#emailInput').val(),
+        reorder_password: $('#passwordInput').val()
+    };
+    if (!loginObj.reorder_username.length)return;
+    if (!loginObj.reorder_password.length)return;
+    $.when(api.commAPI('AccountMethods','findAccount', loginObj)).done(function (res) {
+       ui.showRecipesView();
+    }).fail(function () {
+        //nothing here
+    });
+
 };
 
 ui.buttonPushed = function (which) {
@@ -48,7 +61,12 @@ ui.processCreateAccount = function () {
 };
 
 ui.cancelCreateAccount = function () {
+    $.each($('input'), function (index, val) {
+        $(val).val('');
+    });
 
+    $('.create-account-info').hide();
+    $('.next-buttons').show();
 };
 
 ui.showRecipesView = function () {
