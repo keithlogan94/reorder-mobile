@@ -41,11 +41,8 @@ ui.buttonPushed = function (which) {
 ui.processCreateAccount = function () {
 
     var createAccountObj = {
-        lastName: $('#lastInput').val(),
         firstName: $('#firstInput').val(),
-        middleName: $('#middleInput').val(),
-        gender: $('#gender-select').val(),
-        birthday: '1994-12-23',
+        lastName: $('#lastInput').val(),
         phone: $('#phoneInput').val(),
         email: $('#emailInput').val(),
         password: $('#passwordInput').val()
