@@ -5,6 +5,7 @@ var ui = {};
 
 $(function () {
     address.loadCountriesSelect($('.country-container'));
+    ui.showRecipesView();
 });
 
 ui.showAccountCreation = function () {
@@ -71,6 +72,25 @@ ui.showRecipesView = function () {
     $('.view').hide();
     $('.recipe-view').show();
     $('.recipe-view').removeAttr('hidden');
+    $('.container')[0].style.paddingRight = '0px';
+    $('.container')[0].style.paddingLeft = '0px';
+};
+
+ui.animateActiveRecipeIn = function () {
+    ui.activeRecipeDetail.css('left','500px');
+    ui.activeRecipeDetail.show();
+    ui.activeRecipeDetail.removeAttr('hidden');
+    ui.activeRecipeDetail.animate({left:'0px'}, 400,'swing', function () {
+        // ui.activeRecipeDetail.hide();
+        // ui.activeRecipeDetail.css('left','0px');
+    });
+};
+
+ui.animateActiveRecipeOut = function () {
+    ui.activeRecipeDetail.animate({left:'500px'}, 400,'swing', function () {
+        ui.activeRecipeDetail.hide();
+        ui.activeRecipeDetail.css('left','0px');
+    });
 };
 
 
